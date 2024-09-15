@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estado de Resultados 2025</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            padding: 20px;
+            color: #343a40;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        th, td {
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        td.concepto {
+            text-align: left;
+            font-weight: bold;
+        }
+        #mensajeFinal {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #28a745;
+            text-align: center;
+        }
+        #nota {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6c757d;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reproductor de música de fondo -->
+    <audio id="musicaFondo" src="tu_cancion.mp3" loop></audio>
+
+    <div class="container">
+        <h1>¿Cuánto aspiras a facturar en 2025?</h1>
+        <label for="facturacion">Ingresa el valor de facturación proyectada (En millones de pesos):</label>
+        <input type="text" id="facturacion" placeholder="Ingresa el monto en millones">
+
+        <label for="sector">Selecciona tu sector económico:</label>
+        <select id="sector" onchange="mostrarCamposPersonalizados()">
+            <option value="">-- Selecciona un sector --</option>
+            <option value="manufactura">Manufactura</option>
+            <option value="comercio">Comercio minorista</option>
+            <option value="tecnología">Tecnología</option>
+            <option value="finanzas">Servicios financieros</option>
+            <option value="salud">Salud</option>
+            <option value="transporte">Transporte</option>
+            <option value="agricultura">Agricultura</option>
+            <option value="inmobiliario">Inmobiliario</option>
+            <option value="energía">Energía</option>
+            <option value="educación">Educación</option>
+            <option value="panadería">Panadería</option>
+            <option value="despachosTributarios">Despachos Tributarios</option>
+            <option value="despachosContables">Despachos Contables</option>
+            <option value="comercioElectrónico">Comercio Electrónico</option>
+            <option value="construcción">Construcción</option>
+            <option value="otro">Otro sector / Personalizado</option>
+        </select>
+
+        <div id="camposPersonalizados" style="display: none;">
+            <label for="porcentajeCostos">Costos (En millones de pesos):</label>
+            <input type="text" id="porcentajeCostos" placeholder="Ingresa los costos en millones">
+
+            <label for="porcentajeGastosOperativos">Gastos Operativos (En millones de pesos):</label>
+            <input type="text" id="porcentajeGastosOperativos" placeholder="Ingresa los gastos operativos en millones">
+
+            <label for="porcentajeGastosNoOperacionales">Gastos No Operacionales (En millones de pesos):</label>
+            <input type="text" id="porcentajeGastosNoOperacionales" placeholder="Ingresa los gastos no operacionales en millones">
+        </div>
+
+        <button onclick="calcularEstadoResultados()">Calcular Estado de Resultados</button>
+
+        <div id="resultado" style="display:none;">
+            <h2>Estado de Resultados 2025</h2>
+            <table id="tablaResultados">
+                <tr>
+                    <td class="concepto">Ingresos</td>
+                    <td id="ingresos"></td>
+                </tr>
+                <tr id="filaCostos">
+                    <td class="concepto">(-) Costos</td>
+                    <td id="costos"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">= Utilidad Bruta</td>
+                    <td id="utilidadBruta"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">(-) Gastos Operativos</td>
+                    <td id="gastosOperacionales"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">= Utilidad Operacional</td>
+                    <td id="utilidadOperacional"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">(-) Gastos No Operacionales</td>
+                    <td id="gastosNoOperacionales"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">= Utilidad Antes de Impuestos</td>
+                    <td id="utilidadAntesImpuestos"></td>
+                </tr>
+                <tr>
+                    <td class="concepto">(-) Impuesto de Renta (35%)</td>
+                    <td id="impuestoRenta"></td>
+                </tr>
+                <tr>
+                    <td class="concepto"><strong>= Utilidad Neta</strong></td>
+                    <td id="utilidadNeta"><strong></strong></td>
+                </tr>
+            </table>
+            <div id="mensajeFinal"><strong>¡Vamos por ese mejor futuro!</strong></div>
+            <div id="nota">* Todos los valores están expresados en millones de pesos.</div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarCamposPersonalizados() {
+            var sector = document.getElementById('sector').value;
+            var camposPersonalizados = document.getElementById('camposPersonalizados');
+            if (sector === 'otro') {
+                camposPersonalizados.style.display = 'block';
+            } else {
+                camposPersonalizados.style.display = 'none';
+            }
+        }
+
+        // Función para formatear números con separadores de miles
+        function formatearNumero(valor) {
+            return valor.toLocaleString('es-CO');
+        }
+
+        // Función para formatear el valor mientras se escribe
+        function formatearEntradaNumero(input) {
+            var valor = input.value;
+            valor = valor.replace(/\D/g, '');
+            valor = new Intl.NumberFormat('es-CO').format(valor);
+            input.value = valor;
+        }
+
+        document.getElementById('facturacion').addEventListener('input', function() {
+            formatearEntradaNumero(this);
+        });
+
+        document.getElementById('porcentajeCostos').addEventListener('input', function() {
+            formatearEntradaNumero(this);
+        });
+
+        document.getElementById('porcentajeGastosOperativos').addEventListener('input', function() {
+            formatearEntradaNumero(this);
+        });
+
+        document.getElementById('porcentajeGastosNoOperacionales').addEventListener('input', function() {
+            formatearEntradaNumero(this);
+        });
+
+        function calcularEstadoResultados() {
+            var facturacionInput = document.getElementById('facturacion').value;
+            var facturacion = parseFloat(facturacionInput.replace(/[.,\s]/g, ''));
+
+            var sector = document.getElementById('sector').value;
+            var porcentajeCostos;
+            var porcentajeGastosOperacionales;
+            var porcentajeGastosNoOperacionales = 0.02 * facturacion; // 2% para todos los sectores
+
+            // Ratios personalizados por sector
+            switch (sector) {
+                case 'manufactura':
+                    porcentajeCostos = 0.65 * facturacion;
+                    porcentajeGastosOperacionales = 0.15 * facturacion;
+                    break;
+                case 'comercio':
+                    porcentajeCostos = 0.60 * facturacion;
+                    porcentajeGastosOperacionales = 0.10 * facturacion;
+                    break;
+                case 'tecnología':
+                    porcentajeCostos = 0.30 * facturacion;
+                    porcentajeGastosOperacionales = 0.20 * facturacion;
+                    break;
+                case 'finanzas':
+                    porcentajeCostos = 0.25 * facturacion;
+                    porcentajeGastosOperacionales = 0.25 * facturacion;
+                    break;
+                case 'salud':
+                    porcentajeCostos = 0.50 * facturacion;
+                    porcentajeGastosOperacionales = 0.20 * facturacion;
+                    break;
+                case 'transporte':
+                    porcentajeCostos = 0.70 * facturacion;
+                    porcentajeGastosOperacionales = 0.10 * facturacion;
+                    break;
+                case 'agricultura':
+                    porcentajeCostos = 0.55 * facturacion;
+                    porcentajeGastosOperacionales = 0.15 * facturacion;
+                    break;
+                case 'inmobiliario':
+                    porcentajeCostos = 0.00 * facturacion;
+                    porcentajeGastosOperacionales = 0.50 * facturacion;
+                    break;
+                case 'energía':
+                    porcentajeCostos = 0.70 * facturacion;
+                    porcentajeGastosOperacionales = 0.10 * facturacion;
+                    break;
+                case 'educación':
+                    porcentajeCostos = 0.40 * facturacion;
+                    porcentajeGastosOperacionales = 0.20 * facturacion;
+                    break;
+                case 'panadería':
+                    porcentajeCostos = 0.55 * facturacion;
+                    porcentajeGastosOperacionales = 0.15 * facturacion;
+                    break;
+                case 'despachosTributarios':
+                    porcentajeCostos = 0.10 * facturacion;
+                    porcentajeGastosOperacionales = 0.25 * facturacion;
+                    break;
+                case 'despachosContables':
+                    porcentajeCostos = 0.10 * facturacion;
+                    porcentajeGastosOperacionales = 0.25 * facturacion;
+                    break;
+                case 'comercioElectrónico':
+                    porcentajeCostos = 0.40 * facturacion;
+                    porcentajeGastosOperacionales = 0.15 * facturacion;
+                    break;
+                case 'construcción':
+                    porcentajeCostos = 0.60 * facturacion;
+                    porcentajeGastosOperacionales = 0.20 * facturacion;
+                    break;
+                case 'otro':
+                    porcentajeCostos = parseFloat(document.getElementById('porcentajeCostos').value.replace(/[.,\s]/g, ''));
+                    porcentajeGastosOperacionales = parseFloat(document.getElementById('porcentajeGastosOperativos').value.replace(/[.,\s]/g, ''));
+                    porcentajeGastosNoOperacionales = parseFloat(document.getElementById('porcentajeGastosNoOperacionales').value.replace(/[.,\s]/g, ''));
+                    break;
+                default:
+                    porcentajeCostos = 0.60 * facturacion;
+                    porcentajeGastosOperacionales = 0.15 * facturacion;
+                    break;
+            }
+
+            var ingresos = facturacion;
+            var costos = porcentajeCostos;
+            var utilidadBruta = ingresos - costos;
+            var gastosOperacionales = porcentajeGastosOperacionales;
+            var utilidadOperacional = utilidadBruta - gastosOperacionales;
+            var gastosNoOperacionales = porcentajeGastosNoOperacionales;
+            var utilidadAntesImpuestos = utilidadOperacional - gastosNoOperacionales;
+            var impuestoRenta = 0.35 * utilidadAntesImpuestos;
+            var utilidadNeta = utilidadAntesImpuestos - impuestoRenta;
+
+            document.getElementById('ingresos').innerText = formatearNumero(ingresos);
+            document.getElementById('costos').innerText = formatearNumero(costos);
+            document.getElementById('utilidadBruta').innerText = formatearNumero(utilidadBruta);
+            document.getElementById('gastosOperacionales').innerText = formatearNumero(gastosOperacionales);
+            document.getElementById('utilidadOperacional').innerText = formatearNumero(utilidadOperacional);
+            document.getElementById('gastosNoOperacionales').innerText = formatearNumero(gastosNoOperacionales);
+            document.getElementById('utilidadAntesImpuestos').innerText = formatearNumero(utilidadAntesImpuestos);
+            document.getElementById('impuestoRenta').innerText = formatearNumero(impuestoRenta);
+            document.getElementById('utilidadNeta').innerText = formatearNumero(utilidadNeta);
+
+            // Mostrar el estado de resultados
+            document.getElementById('resultado').style.display = 'block';
+
+            // Iniciar la música al hacer el cálculo
+            var audio = document.getElementById('musicaFondo');
+            audio.play();
+        }
+    </script>
+
+</body>
+</html>
+
